@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+<body>
+    <div class="upload-container">
+        <h1>File Upload</h1>
+        <p>Upload any file to process with AI</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div>
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7,10 12,15 17,10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <p>Drag and drop your file here</p>
+                <p>or</p>
+                <button class="upload-btn" id="chooseFileBtn">
+                    Choose File
+                </button>
+            </div>
+        </div>
+        
+        <input type="file" id="fileInput" accept="*/*">
+        
+        <div class="file-info" id="fileInfo">
+            <h3>Selected File:</h3>
+            <p id="fileName"></p>
+            <p id="fileSize"></p>
+            <p id="fileType"></p>
+        </div>
+        
+        <button class="upload-btn" id="processBtn" disabled>
+            Process File
+        </button>
+        
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html> 
