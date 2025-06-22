@@ -13,7 +13,7 @@ A creative, AI powered web application that transform personal videos into uniqu
 
 1. **Video Upload**: Users upload a video file through the web interface
 2. **Frame Extraction**: The system extracts frames at 1-second intervals (up to 30 frames for a 30-second video)
-3. **Vision Analysis**: Each frame is analyzed using Google Gemini and is sent to LLama to analyze the text from video-to-text to see the theme/mood the song should generate.
+3. **Vision Analysis**: Each frame is analyzed using Google Gemini to analyze the text from video-to-text to see the theme/mood the song should generate.
 4. **AI Synthesis**: Song generation service analysis the information received and creates a song from scratch.
 5. **Result Display**: The User is then presented with the generated song along with a quick reasoning of why the song was generated like so. Giving the user the option to do it once again.
 
