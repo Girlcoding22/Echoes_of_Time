@@ -6,6 +6,8 @@ button:hover{
     background-color: #d4bbf1;
 }
 .button2{
+    display: flex;
+    align-items: center;
     background-color: lightgrey;
     color: black;
     text-align: right;
@@ -13,7 +15,8 @@ button:hover{
     border: 1px solid black; width: 100%;
 }
 h2{
-    padding-right: 0;
+    font-size:2em;
+     margin-right:20px;
 }
 
 .p2{
