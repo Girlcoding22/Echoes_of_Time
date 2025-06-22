@@ -19,10 +19,12 @@ hr{
 }
 h1{
     margin: 0;
+    font-family: 'Roboto Mono', monospace;
 }
 h2{
     font-size:2em;
     text-align: center;
+    font-family: 'Archivo', sans-serif;
 }
 .headerALL{
     display: flex;
@@ -43,6 +45,7 @@ ul{
 }
 li:hover{
     color: #bc74f4;
+    font-family: 'Archivo', sans-serif;
 }
 .quote{
      font-style: italic;
