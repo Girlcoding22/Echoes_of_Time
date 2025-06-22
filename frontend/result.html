@@ -13,11 +13,11 @@
         </ul>
     <hr>
     <!--make a loading screen, then show this up!-->
-    <p2 class="p p2">Here lies an image!</p2>
-    <button class="button button2">Cancel</button>
-    <br>
-    <br>
-    <!--insert at random a quote in the list-->
+    <div class="loading-screen">
+        <div class="Loader"></div>
+        <h2>Loading...</h2>
+        <p class="loading-text">Please wait while we process your request.</p>
+        <!--insert at random a quote in the list-->
     <script>
     const quotes = [
         "The first clip ever aired on MTV is the Buggles Video Killed the Radio Star. The first clip ever aired on MTV Europe is Dire Straits’ Money For Nothing. (Mishal, Or. “40 Amazing Music Facts That Will Shake Your Ears.”)",
@@ -27,6 +27,13 @@
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     document.write(`<p class="quote">${randomQuote}</p>`);
     </script>
-    <!-- <p class="p quote">This is a trial!</p> -->
+
+
+    <!---end of the loading screen--->
+    <!--don't have anything under this show up until the end of model loading-->
+        <!-- <h2>Result</h2>    
+        <p2 class="p p2">Here lies an image!</p2>
+        <button class="button button2">Cancel</button>
+         -->
 </body>
 </html>
