@@ -6,18 +6,23 @@ button:hover{
     background-color: #d4bbf1;
 }
 .button2{
-    display: flex;
-    align-items: center;
     background-color: lightgrey;
     color: black;
-    /* text-align: right; */
-    margin-left: 50%;
+    margin-left: 47.5%;
 }hr{
     border: 1px solid black; width: 100%;
+}
+h1{
+    margin: 0;
 }
 h2{
     font-size:2em;
     text-align: center;
+}
+.headerALL{
+    display: flex;
+    align-items: center; 
+    gap: 20px;
 }
 
 .p2{
@@ -29,12 +34,12 @@ ul{
     list-style: none; 
     gap: 20px; 
     padding: 0; 
-    margin: 0;}
+    margin: 0;
+}
 .quote{
-    font-style: italic;
+     font-style: italic;
     border: black 2px dashed;
-    display: inline;
-    padding: 0 2px;
+    text-align: center;
 }
 
 .Loader {
@@ -43,7 +48,7 @@ ul{
   border-top: 16px solid #bc74f4;
   width: 120px;
   height: 120px;
-  margin-left: 40%;
+  margin-left: 43%;
   -webkit-animation: spin 2s linear infinite; /* Safari */
   animation: spin 2s linear infinite;
   
