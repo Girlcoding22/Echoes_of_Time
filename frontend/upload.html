@@ -33,16 +33,21 @@
                 <button class="upload-btn" id="chooseFileBtn">
                     Choose File
                 </button>
-                <input type="file" id="fileInput" accept="*/*" style="display: none;">
-                <div class="file-info" id="fileInfo" style="display: none;">
-                    <h3>Selected File:</h3>
-                    <p id="fileName"></p>
-                    <p id="fileSize"></p>
-                    <p id="fileType"></p>
-                </div>
-                <button class="upload-btn" id="processBtn" disabled>
-                    Process File
-                </button>
+            </div>
+        </div>
+        
+        <input type="file" id="fileInput" accept="*/*">
+        
+        <div class="file-info" id="fileInfo">
+            <h3>Selected File:</h3>
+            <p id="fileName"></p>
+            <p id="fileSize"></p>
+            <p id="fileType"></p>
+        </div>
+        
+        <button class="upload-btn" id="processBtn" disabled>
+            Process File
+        </button>
         
         <div class="progress-bar" id="progressBar">
             <div class="progress-fill" id="progressFill"></div>

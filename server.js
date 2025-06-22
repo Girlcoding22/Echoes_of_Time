@@ -1,8 +1,15 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const cors = require('cors');
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { audio_processing, describe_audio } from './audio/audio_understanding.js';
+import { describe_video } from './audio/video_understanding.js';
+import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './audio/audio-utils.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
@@ -13,10 +20,16 @@ app.use(cors());
 // Serve only specific static files that upload.html needs
 app.use('/script.js', express.static('frontend/script.js'));
 app.use('/style.css', express.static('frontend/style.css'));
+app.use('/monitor.js', express.static('frontend/monitor.js'));
 
 // Route for upload.html (root and explicit)
 app.get(['/', '/upload.html'], (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'upload.html'));
+});
+
+// Route for monitor page
+app.get('/monitor', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'monitor.html'));
 });
 
 // Block access to all other frontend files
@@ -57,8 +70,146 @@ const upload = multer({
     }
 });
 
+// Processing status tracking
+const processingStatus = new Map();
+
+// Function to process uploaded file
+async function processUploadedFile(filePath, filename) {
+    try {
+        // Set initial processing status
+        processingStatus.set(filename, {
+            status: 'processing',
+            startTime: new Date(),
+            progress: 'Starting...'
+        });
+
+        console.log(`\n🎯 PROCESSING UPLOADED FILE: ${filename}`);
+        console.log(`📁 File path: ${filePath}`);
+        
+        const fileExtension = filename.split('.').pop().toLowerCase();
+        
+        if (fileExtension === 'mp3' || fileExtension === 'm4a' || fileExtension === 'wav') {
+            processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Processing audio file...'
+            });
+            
+            console.log('🎵 Audio file detected - processing with audio_processing...');
+            const audio_description = await audio_processing(filePath);
+            console.log('✅ Audio processing completed:', audio_description);
+            
+            processingStatus.set(filename, {
+                status: 'completed',
+                progress: 'Audio processing completed',
+                result: { type: 'audio', description: audio_description },
+                endTime: new Date()
+            });
+            
+            // Delete the processed file
+            fs.unlinkSync(filePath);
+            console.log(`🗑️ Deleted processed audio file: ${filename}`);
+            
+            return { type: 'audio', description: audio_description };
+            
+        } else if (fileExtension === 'mp4' || fileExtension === 'mov' || fileExtension === 'avi') {
+            processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Extracting audio from video...'
+            });
+            
+            console.log('🎬 Video file detected - extracting audio...');
+            let audio_file64;
+            try {
+                audio_file64 = await extractAudioFromMP4(filePath);
+            } catch (error) {
+                console.log('Primary extraction failed, trying alternative...');
+                audio_file64 = await extractAudioFromMP4Alternative(filePath);
+            }
+            
+            processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Processing extracted audio...'
+            });
+            
+            console.log('🎵 Audio extracted - processing with describe_audio...');
+            const audio_description = await describe_audio(audio_file64);
+            console.log('✅ Audio description completed:', audio_description);
+            
+            processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Analyzing video content...'
+            });
+            
+            console.log('🎬 Video analysis - processing with describe_video...');
+            const video_description = await describe_video(filePath);
+            console.log('✅ Video description completed:', video_description);
+            
+            processingStatus.set(filename, {
+                status: 'completed',
+                progress: 'Video processing completed',
+                result: { 
+                    type: 'video', 
+                    audioDescription: audio_description,
+                    videoDescription: video_description,
+                    combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+                },
+                endTime: new Date()
+            });
+            
+            // Delete the processed file
+            fs.unlinkSync(filePath);
+            console.log(`🗑️ Deleted processed video file: ${filename}`);
+            
+            return { 
+                type: 'video', 
+                audioDescription: audio_description,
+                videoDescription: video_description,
+                combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+            };
+            
+        } else {
+            processingStatus.set(filename, {
+                status: 'completed',
+                progress: 'File type not supported',
+                result: { type: 'other', description: 'File type not supported for processing' },
+                endTime: new Date()
+            });
+            
+            console.log('📄 Other file type - no processing available');
+            
+            // Delete unsupported files too
+            fs.unlinkSync(filePath);
+            console.log(`🗑️ Deleted unsupported file: ${filename}`);
+            
+            return { type: 'other', description: 'File type not supported for processing' };
+        }
+        
+    } catch (error) {
+        console.error('❌ Error processing file:', error);
+        
+        processingStatus.set(filename, {
+            status: 'error',
+            progress: 'Processing failed',
+            error: error.message,
+            endTime: new Date()
+        });
+        
+        // Try to delete the file even if processing failed
+        try {
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+                console.log(`🗑️ Deleted file after processing error: ${filename}`);
+            }
+        } catch (deleteError) {
+            console.error(`❌ Failed to delete file after error: ${filename}`, deleteError);
+        }
+        
+        return { type: 'error', description: error.message };
+    }
+}
+
 // File upload endpoint
-app.post('/api/upload', upload.single('file'), (req, res) => {
+app.post('/api/upload', upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ 
@@ -70,6 +221,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
         console.log('File uploaded:', req.file.originalname);
         console.log('Stored at:', req.file.path);
 
+        // Send immediate response to client
         res.json({
             success: true,
             message: 'File uploaded successfully',
@@ -79,6 +231,16 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
             path: req.file.path
         });
 
+        // Process the file asynchronously (don't wait for response)
+        processUploadedFile(req.file.path, req.file.filename)
+            .then(result => {
+                console.log(`\n🎉 File processing completed for: ${req.file.filename}`);
+                console.log(`📊 Processing result:`, result);
+            })
+            .catch(error => {
+                console.error(`\n💥 File processing failed for: ${req.file.filename}`, error);
+            });
+
     } catch (error) {
         console.error('Upload error:', error);
         res.status(500).json({
@@ -86,6 +248,24 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
             message: 'Server error during upload'
         });
     }
+});
+
+// Get processing status for a specific file
+app.get('/api/processing-status/:filename', (req, res) => {
+    const { filename } = req.params;
+    const status = processingStatus.get(filename);
+    
+    if (status) {
+        res.json({ success: true, status });
+    } else {
+        res.json({ success: false, message: 'File not found in processing queue' });
+    }
+});
+
+// Get all processing statuses
+app.get('/api/processing-status', (req, res) => {
+    const allStatuses = Object.fromEntries(processingStatus);
+    res.json({ success: true, statuses: allStatuses });
 });
 
 // Get list of uploaded files
@@ -116,4 +296,5 @@ app.get('/api/files', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Uploads will be stored in: ${path.join(process.cwd(), 'uploads')}`);
+    console.log(`🎯 File processing will trigger automatically on upload!`);
 }); 
