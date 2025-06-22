@@ -5,7 +5,8 @@ import fs from 'fs';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { audio_processing, describe_audio } from './audio/audio_understanding.js';
-import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './monitor-uploads.js';
+import { describe_video } from './audio/video_understanding.js';
+import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './audio/audio-utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -104,6 +105,10 @@ async function processUploadedFile(filePath, filename) {
                 endTime: new Date()
             });
             
+            // Delete the processed file
+            fs.unlinkSync(filePath);
+            console.log(`🗑️ Deleted processed audio file: ${filename}`);
+            
             return { type: 'audio', description: audio_description };
             
         } else if (fileExtension === 'mp4' || fileExtension === 'mov' || fileExtension === 'avi') {
@@ -131,13 +136,36 @@ async function processUploadedFile(filePath, filename) {
             console.log('✅ Audio description completed:', audio_description);
             
             processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Analyzing video content...'
+            });
+            
+            console.log('🎬 Video analysis - processing with describe_video...');
+            const video_description = await describe_video(filePath);
+            console.log('✅ Video description completed:', video_description);
+            
+            processingStatus.set(filename, {
                 status: 'completed',
                 progress: 'Video processing completed',
-                result: { type: 'video', description: audio_description },
+                result: { 
+                    type: 'video', 
+                    audioDescription: audio_description,
+                    videoDescription: video_description,
+                    combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+                },
                 endTime: new Date()
             });
             
-            return { type: 'video', description: audio_description };
+            // Delete the processed file
+            fs.unlinkSync(filePath);
+            console.log(`🗑️ Deleted processed video file: ${filename}`);
+            
+            return { 
+                type: 'video', 
+                audioDescription: audio_description,
+                videoDescription: video_description,
+                combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+            };
             
         } else {
             processingStatus.set(filename, {
@@ -148,6 +176,11 @@ async function processUploadedFile(filePath, filename) {
             });
             
             console.log('📄 Other file type - no processing available');
+            
+            // Delete unsupported files too
+            fs.unlinkSync(filePath);
+            console.log(`🗑️ Deleted unsupported file: ${filename}`);
+            
             return { type: 'other', description: 'File type not supported for processing' };
         }
         
@@ -160,6 +193,16 @@ async function processUploadedFile(filePath, filename) {
             error: error.message,
             endTime: new Date()
         });
+        
+        // Try to delete the file even if processing failed
+        try {
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+                console.log(`🗑️ Deleted file after processing error: ${filename}`);
+            }
+        } catch (deleteError) {
+            console.error(`❌ Failed to delete file after error: ${filename}`, deleteError);
+        }
         
         return { type: 'error', description: error.message };
     }
@@ -207,6 +250,24 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
     }
 });
 
+// Get processing status for a specific file
+app.get('/api/processing-status/:filename', (req, res) => {
+    const { filename } = req.params;
+    const status = processingStatus.get(filename);
+    
+    if (status) {
+        res.json({ success: true, status });
+    } else {
+        res.json({ success: false, message: 'File not found in processing queue' });
+    }
+});
+
+// Get all processing statuses
+app.get('/api/processing-status', (req, res) => {
+    const allStatuses = Object.fromEntries(processingStatus);
+    res.json({ success: true, statuses: allStatuses });
+});
+
 // Get list of uploaded files
 app.get('/api/files', (req, res) => {
     try {
@@ -230,24 +291,6 @@ app.get('/api/files', (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Failed to get files' });
     }
-});
-
-// Get processing status for a specific file
-app.get('/api/processing-status/:filename', (req, res) => {
-    const { filename } = req.params;
-    const status = processingStatus.get(filename);
-    
-    if (status) {
-        res.json({ success: true, status });
-    } else {
-        res.json({ success: false, message: 'File not found in processing queue' });
-    }
-});
-
-// Get all processing statuses
-app.get('/api/processing-status', (req, res) => {
-    const allStatuses = Object.fromEntries(processingStatus);
-    res.json({ success: true, statuses: allStatuses });
 });
 
 app.listen(PORT, () => {

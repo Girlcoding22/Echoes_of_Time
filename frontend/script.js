@@ -90,9 +90,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Upload file function
     async function uploadFile(file) {
         try {
-            // Show upload starting alert
-            alert('Starting file upload...');
-            
             processBtn.disabled = true;
             processBtn.textContent = 'Processing...';
 
@@ -111,9 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const result = await response.json();
-            
-            // Show upload completion alert
-            alert(`File uploaded successfully!\nStored as: ${result.filename}\n\nProcessing will now begin automatically.`);
             
             // Handle response
             if (result.success) {
@@ -138,9 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function monitorProcessingStatus(filename) {
         console.log(`🔍 Starting to monitor processing for: ${filename}`);
         
-        // Show processing started alert
-        alert(`Processing started for: ${filename}\n\nYou will be notified when processing is complete.`);
-        
         // Poll for status updates
         const statusInterval = setInterval(async () => {
             try {
@@ -149,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const data = await response.json();
                     
                     if (data.success && data.status) {
-                        // Show status update alert
                         if (data.status.status === 'processing') {
                             console.log(`Processing: ${data.status.progress}`);
                         } else if (data.status.status === 'completed') {
@@ -160,9 +150,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             let resultMessage = `Processing completed for: ${filename}\n\n`;
                             if (data.status.result) {
                                 resultMessage += `Type: ${data.status.result.type}\n\n`;
-                                resultMessage += `Description:\n${data.status.result.description}`;
+                                
+                                if (data.status.result.type === 'video') {
+                                    // Enhanced display for video files
+                                    resultMessage += `🎵 AUDIO ANALYSIS:\n${data.status.result.audioDescription}\n\n`;
+                                    resultMessage += `🎬 VIDEO ANALYSIS:\n${data.status.result.videoDescription}\n\n`;
+                                    resultMessage += `🗑️ File has been automatically deleted to save storage space.`;
+                                } else {
+                                    // Standard display for audio and other files
+                                    resultMessage += `Description:\n${data.status.result.description}\n\n`;
+                                    resultMessage += `🗑️ File has been automatically deleted to save storage space.`;
+                                }
                             } else {
-                                resultMessage += `Status: ${data.status.progress}`;
+                                resultMessage += `Status: ${data.status.progress}\n\n`;
+                                resultMessage += `🗑️ File has been automatically deleted to save storage space.`;
                             }
                             alert(resultMessage);
                             
