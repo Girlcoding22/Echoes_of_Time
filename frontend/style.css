@@ -8,13 +8,14 @@ button:hover{
 .button2{
     background-color: lightgrey;
     color: black;
-    text-align: left;
+    text-align: right;
 }hr{
     border: 1px solid black; width: 100%;
 }
 h2{
-    text-align: right;
+    padding-right: 0;
 }
+
 .p2{
     padding-right: 50%;
     color: green;
@@ -40,8 +41,7 @@ ul{
   height: 120px;
   -webkit-animation: spin 2s linear infinite; /* Safari */
   animation: spin 2s linear infinite;
-  margin:0;
-  padding:0;
+  
 }
 /* Safari */
 
