@@ -64,7 +64,7 @@ As the game progresses, the camera reveals additional elements of the park setti
 ### Environment Variables
 
 - GOOGLE_API_KEY: Your Google API key (required) and all it's other Google API features.Technical Details
-- GOOGLE_ACCESS_TOKEN
+- GOOGLE_ACCESS_TOKEN: Your google authentication token.
 - GOOGLE_CLOUD_PROJECT: where VertexAI and Lyria are enabled
 - NODE_ENV
 - PORT
