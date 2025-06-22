@@ -1,0 +1,13 @@
+{
+  "name": "services",
+  "version": "1.0.0",
+  "description": "Media processing utilities for audio and video analysis",
+  "type": "module",
+  "scripts": {
+    "start": "node audio_understanding.js",
+    "dev": "node audio_understanding.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^1.6.0"
+  }
+}

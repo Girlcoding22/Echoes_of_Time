@@ -4,9 +4,11 @@ import path from 'path';
 import fs from 'fs';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-import { audio_processing, describe_audio } from './media-processing/audio_understanding.js';
-import { describe_video } from './media-processing/video_understanding.js';
-import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './media-processing/audio-utils.js';
+import { audio_processing, describe_audio } from './services/media-processing/audio_understanding.js';
+import { describe_video } from './services/media-processing/video_understanding.js';
+import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './services/media-processing/audio-utils.js';
+import { generateSongDescription } from './services/judging/judge-llm.js';
+import { generateAndSaveSong } from './services/song/song_generation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -150,13 +152,33 @@ async function processUploadedFile(filePath, filename) {
             console.log('✅ Video description completed:', video_description);
             
             processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Generating song description...'
+            });
+            
+            console.log('🎵 Generating song description from audio and video descriptions...');
+            const song_description = await generateSongDescription(video_description, audio_description);
+            console.log('✅ Song description generated:', song_description);
+            
+            processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Generating and saving song...'
+            });
+            
+            console.log('🎵 Generating and saving song...');
+            const song_file = await generateAndSaveSong(song_description);
+            console.log('✅ Song generated and saved:', song_file);
+            
+            processingStatus.set(filename, {
                 status: 'completed',
                 progress: 'Video processing completed',
                 result: { 
                     type: 'video', 
                     audioDescription: audio_description,
                     videoDescription: video_description,
-                    combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+                    songDescription: song_description,
+                    songFile: song_file,
+                    combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}\n\nSONG DESCRIPTION:\n${song_description}`
                 },
                 endTime: new Date()
             });
@@ -169,7 +191,9 @@ async function processUploadedFile(filePath, filename) {
                 type: 'video', 
                 audioDescription: audio_description,
                 videoDescription: video_description,
-                combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+                songDescription: song_description,
+                songFile: song_file,
+                combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}\n\nSONG DESCRIPTION:\n${song_description}`
             };
             
         } else {
@@ -314,8 +338,26 @@ app.get('/api/files', (req, res) => {
     }
 });
 
+// Serve generated song files
+app.get('/api/songs/:filename', (req, res) => {
+    try {
+        const { filename } = req.params;
+        const songPath = path.join(__dirname, 'services/song/generated-songs', filename);
+        
+        if (fs.existsSync(songPath)) {
+            res.setHeader('Content-Type', 'audio/mpeg');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.sendFile(songPath);
+        } else {
+            res.status(404).json({ error: 'Song file not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to serve song file' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Uploads will be stored in: ${path.join(process.cwd(), 'uploads')}`);
-    console.log(`🎯 File processing will trigger automatically on upload!`);
+    console.log(`File processing will trigger automatically on upload!`);
 }); 
