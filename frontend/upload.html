@@ -10,20 +10,22 @@
 </head>
 <body>
     <div class="headerALL" >
-        <h1>SSG:Echoes of Time</h1>
-        <ul>
+        <h1>Echoes of Time</h1>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0;">
+        <ul class="nav-small">
             <li onclick="window.location.href='upload.html'">Home</li>
             <li onclick="window.location.href='about.html'">About</li>
         </ul>
+        <p class="catchphrase">Create a soundtrack of your life!</p>
     </div>
-    <p class="catchphrase">Create a soundtrack of your life!</p>
     <hr>
    
     
 
     <div class="upload-container">    
-        <h2>File Upload</h2>
-        <p>Upload any file to process with AI</p>
+        <h2>Upload a Snapshot of Your Life!</h2>
+        <p style="text-align: center;">Upload any file to process with AI!</p>
         
         <div class="upload-area" id="uploadArea">
             <div>
@@ -38,7 +40,7 @@
                 </button>
         <input type="file" id="fileInput" accept="*/*" style="display: none;">
         <div class="file-info" id="fileInfo" style="display: none;">
-            <h3>Selected File:</h3>
+            <h3>Your File</h3>
             <p id="fileName"></p>
             <p id="fileSize"></p>
             <p id="fileType"></p>

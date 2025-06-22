@@ -7,8 +7,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from .env file in project root
-dotenv.config({ path: path.join(process.cwd(), '.env') });
+// Load environment variables from .env file in project root (2 levels up from services/song/)
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 /**
  * Song Generation using Google's Lyria Model
@@ -22,16 +22,22 @@ dotenv.config({ path: path.join(process.cwd(), '.env') });
  * @param {string} outputDir - Output directory (default: 'generated-songs')
  * @returns {Promise<string>} - Path to the generated MP3 file
  */
-async function writeMP3FromBase64(base64Audio, filename = 'generated-song', outputDir = 'generated-songs') {
+async function writeMP3FromBase64(base64Audio, filename = null, outputDir = 'generated-songs') {
     try {
         // Create output directory if it doesn't exist
         if (!fs.existsSync(outputDir)) {
             fs.mkdirSync(outputDir, { recursive: true });
         }
 
-        // Generate unique filename with timestamp
+        // Generate filename if not provided
+        if (!filename) {
+            const nextNumber = getNextSongNumber(outputDir);
+            filename = `my_song_${nextNumber}`;
+        }
+
+        // Generate unique filename with timestamp if filename is provided but we want to ensure uniqueness
         const timestamp = Date.now();
-        const mp3Filename = `${filename}-${timestamp}.mp3`;
+        const mp3Filename = `${filename}.mp3`;
         const mp3Path = path.join(outputDir, mp3Filename);
 
         // Convert base64 to buffer and write to file
@@ -55,7 +61,7 @@ async function writeMP3FromBase64(base64Audio, filename = 'generated-song', outp
  * @param {string} outputDir - Output directory
  * @returns {Promise<Object>} - Object containing the API response and file path
  */
-async function generate_song(prompt, filename = 'generated-song', outputDir = 'generated-songs') {
+async function generate_song(prompt, filename = null, outputDir = 'generated-songs') {
     try {
         console.log('Generating song...');
         console.log('Prompt:', prompt);
@@ -93,12 +99,13 @@ async function generate_song(prompt, filename = 'generated-song', outputDir = 'g
 export async function generateSong(prompt, negative_prompt = "", seed = null, region = null) {
     const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
     const cloudRegion = region || process.env.GOOGLE_CLOUD_REGION || 'us-central1';
+    const projectId = process.env.GOOGLE_CLOUD_PROJECT || 'gen-lang-client-0903843844'; // Fallback project ID
     
     if (!accessToken) {
         throw new Error('GOOGLE_ACCESS_TOKEN not found in environment variables');
     }
 
-    const url = `https://${cloudRegion}-aiplatform.googleapis.com/v1/projects/${process.env.GOOGLE_CLOUD_PROJECT}/locations/${cloudRegion}/publishers/google/models/lyria-002:predict`;
+    const url = `https://${cloudRegion}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${cloudRegion}/publishers/google/models/lyria-002:predict`;
 
     const requestBody = {
         "instances": [
@@ -208,6 +215,49 @@ async function getAccessToken() {
 }
 
 /**
+ * Get the next available song number by checking existing files
+ * @param {string} outputDir - Directory to check for existing files
+ * @returns {number} - Next available number
+ */
+function getNextSongNumber(outputDir = 'generated-songs') {
+    try {
+        const fullOutputDir = path.join(__dirname, outputDir);
+        
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(fullOutputDir)) {
+            fs.mkdirSync(fullOutputDir, { recursive: true });
+            return 1;
+        }
+        
+        // Get all files in the directory
+        const files = fs.readdirSync(fullOutputDir);
+        
+        // Filter for files that match the pattern "my_song_X.mp3"
+        const songFiles = files.filter(file => 
+            file.startsWith('my_song_') && file.endsWith('.mp3')
+        );
+        
+        if (songFiles.length === 0) {
+            return 1;
+        }
+        
+        // Extract numbers from filenames and find the highest
+        const numbers = songFiles.map(file => {
+            const match = file.match(/my_song_(\d+)\.mp3/);
+            return match ? parseInt(match[1]) : 0;
+        });
+        
+        const maxNumber = Math.max(...numbers);
+        return maxNumber + 1;
+        
+    } catch (error) {
+        console.error('Error getting next song number:', error);
+        // Fallback to timestamp if there's an error
+        return Date.now();
+    }
+}
+
+/**
  * Generate a song and save it as an MP3 file
  * @param {string} prompt - The music description prompt
  * @param {string} filename - Output filename (without extension)
@@ -226,8 +276,8 @@ export async function generateAndSaveSong(prompt, filename = null, region = 'us-
         
         // Generate filename if not provided
         if (!filename) {
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            filename = `generated_song_${timestamp}.mp3`;
+            const nextNumber = getNextSongNumber();
+            filename = `my_song_${nextNumber}.mp3`;
         }
         
         // Ensure the filename has .mp3 extension

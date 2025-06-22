@@ -1,9 +1,12 @@
 body{
     background-color: #ECF0FC;
+    font-family: 'Archivo', sans-serif;
+    padding: 5%;
 }
 
 button{
     background-color: #6488ea;
+    font-family: 'Archivo', sans-serif;
     /* color: black; */
 }
 button:hover{
@@ -44,6 +47,7 @@ h2{
     gap: 20px;
     padding-bottom: 0;
     margin-bottom: 0;
+    justify-content: center;
 }
 
 .catchphrase {
@@ -85,9 +89,26 @@ li:hover{
     font-family: 'Archivo', sans-serif;
 }
 .quote{
-     font-style: italic;
-    border: black 2px dashed;
+    font-style: italic;
+    font-family: 'Archivo', sans-serif;
+    border: 2px solid #6488ea;
+    border-radius: 10px;
     text-align: center;
+    background-color: #f0f8ff;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(100, 136, 234, 0.2);
+}
+
+.quote::before {
+    content: "Fun Facts";
+    display: block;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #6488ea;
+    margin-bottom: 10px;
+    font-style: normal;
 }
 /* Upload container styles */
 .upload-container {
@@ -277,4 +298,110 @@ li:hover{
 .loading-text {
     color: #666;
     margin-top: 15px;
+}
+
+.processAnotherFile{
+    border-radius: 25px;
+    font-family: 'Archivo', sans-serif;
+    font-weight: bold;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.processAnotherFile:hover{
+    background-color: #d4bbf1;
+    transform: scale(1.05);
+}
+
+.download-button {
+    background-color: #6488ea;
+    color: white;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Archivo', sans-serif;
+    text-decoration: none;
+    display: block;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    margin-top: 10px;
+    width: fit-content;
+}
+
+.download-button:hover {
+    background-color: #d4bbf1;
+    transform: scale(1.05);
+    color: white;
+    text-decoration: none;
+}
+
+.animated-dots {
+    display: inline-block;
+}
+
+.dot {
+    opacity: 0;
+}
+
+.dot:nth-child(1) {
+    animation: dot1 3s infinite;
+}
+
+.dot:nth-child(2) {
+    animation: dot2 3s infinite;
+}
+
+.dot:nth-child(3) {
+    animation: dot3 3s infinite;
+}
+
+@keyframes dot1 {
+    0%, 16.67% {
+        opacity: 0;
+    }
+    33.33%, 83.33% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes dot2 {
+    0%, 41.67% {
+        opacity: 0;
+    }
+    58.33%, 83.33% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes dot3 {
+    0%, 66.67% {
+        opacity: 0;
+    }
+    83.33% {
+        opacity: 1;
+    }
+    83.33%, 100% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.nav-small li {
+    padding: 6px 12px;
+    font-size: 14px;
 }

@@ -9,42 +9,68 @@
 </head>
 <body onload="loadResults()" style="margin:0;">
     <div class="headerALL" >
-        <h1>SSG: Echoes of Time</h1>
-        <ul>
+        <h1>Echoes of Time</h1>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0;">
+        <ul class="nav-small">
             <li onclick="window.location.href='upload.html'">Home</li>
             <li onclick="window.location.href='about.html'">About</li>
         </ul>
+        <p class="catchphrase">Create a soundtrack of your life!</p>
     </div>
-    <p class="catchphrase">Create a soundtrack of your life!</p>
     <hr>
     
     <!-- Loading screen -->
     <div id="loadingScreen" class="loading-screen">
         <div>
-            <h2>Processing Your File...</h2>
+            <h2>Processing Your File<span class="animated-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span></h2>
             <div class="Loader"></div>
         </div>
-        <p class="loading-text">Please wait while we analyze your audio/video content.</p>
+        
+        <!--here I am including the random quote fact-->
+        <script>
+            const quotes = [
+                "The first clip ever aired on MTV is the Buggles Video Killed the Radio Star. The first clip ever aired on MTV Europe is Dire Straits' Money For Nothing. (Mishal, Or. \"40 Amazing Music Facts That Will Shake Your Ears.\")",
+                "Only three music companies are responsible for over 80% of the music you listen to Sony BMG, Warner Music Group, and Universal Music Group. (Mishal, Or. \"40 Amazing Music Facts That Will Shake Your Ears.\")",
+                "Tame Impala is just one guy"
+            ];
+            
+            let currentQuoteIndex = Math.floor(Math.random() * quotes.length);
+            let quoteElement = null;
+            
+            function displayQuote() {
+                if (!quoteElement) {
+                    quoteElement = document.createElement('p');
+                    quoteElement.className = 'quote';
+                    document.getElementById('loadingScreen').appendChild(quoteElement);
+                }
+                quoteElement.textContent = quotes[currentQuoteIndex];
+            }
+            
+            function shuffleQuotes() {
+                currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+                displayQuote();
+            }
+            
+            // Display initial quote
+            displayQuote();
+            
+            // Start shuffling quotes every 5 seconds
+            const quoteInterval = setInterval(shuffleQuotes, 5000);
+            
+            // Store the interval ID so we can clear it when results are displayed
+            window.quoteInterval = quoteInterval;
+        </script>
+        <!--end of the random quote fact-->
+        
         <p id="progressText" style="color: #666; font-size: 14px; margin-top: 10px;">Starting analysis...</p>
     </div>
-    <!--here I am including the random quote fact-->
-    <script>
-        const quotes = [
-            "The first clip ever aired on MTV is the Buggles Video Killed the Radio Star. The first clip ever aired on MTV Europe is Dire Straits’ Money For Nothing. (Mishal, Or. “40 Amazing Music Facts That Will Shake Your Ears.”)",
-            "Only three music companies are responsible for over 80% of the music you listen to Sony BMG, Warner Music Group, and Universal Music Group. (Mishal, Or. “40 Amazing Music Facts That Will Shake Your Ears.”)",
-            "Tame Impala is just one guy"
-        ];
-        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        document.write(`<p class="quote">${randomQuote}</p>`);
-        </script>
-    <!--end of the random quote fact-->
     
     <!-- Results display -->
     <div id="resultsContainer" style="display:none;" class="animate-bottom">
-        <h2>Processing Results</h2>
         <div id="resultsContent"></div>
         <div style="margin-top: 20px;">
-            <button onclick="window.location.href='/'" class="button button2">Process Another File</button>
+            <button id="processAnotherFile" onclick="window.location.href='/'" class="processAnotherFile">Process Another File</button>
         </div>
     </div>
 
@@ -121,13 +147,21 @@
             const container = document.getElementById('resultsContainer');
             const content = document.getElementById('resultsContent');
             
-            let html = `<h3>File: ${filename}</h3>`;
-            html += `<p><strong>Type:</strong> ${result.type}</p>`;
+            // Clear the quote interval and hide the quotes when results are displayed
+            if (window.quoteInterval) {
+                clearInterval(window.quoteInterval);
+            }
+            const quoteElement = document.querySelector('.quote');
+            if (quoteElement) {
+                quoteElement.style.display = 'none';
+            }
+            
+            let html = `<h3>Processing Complete!</h3>`;
             
             if (result.type === 'video') {
                 html += `
                     <div style="margin: 20px 0;">
-                        <h4>🎼 Song Description</h4>
+                        <h4>🎼 Song Name</h4>
                         <div style="background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 10px 0; border-left: 4px solid #4caf50;">
                             ${result.songDescription ? result.songDescription.replace(/\n/g, '<br>') : 'Song description not available'}
                         </div>
@@ -138,12 +172,15 @@
                 if (result.songFile && result.songFile.success) {
                     html += `
                         <div style="margin: 20px 0;">
-                            <h4>🎵 Generated Song</h4>
+                            <h4>🎵 Your Song</h4>
                             <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 10px 0; border-left: 4px solid #2196f3;">
                                 <p><strong>Song generated successfully!</strong></p>
-                                <p>Filename: ${result.songFile.filename}</p>
-                                <a href="/api/songs/${result.songFile.filename}" download class="button button2" style="display: inline-block; margin-top: 10px;">
-                                    📥 Download Song
+                                <audio controls style="width: 100%; margin-bottom: 10px;">
+                                    <source src="/api/songs/${result.songFile.filename}" type="audio/mp3">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <a href="/api/songs/${result.songFile.filename}" download class="download-button">
+                                    📥
                                 </a>
                             </div>
                         </div>

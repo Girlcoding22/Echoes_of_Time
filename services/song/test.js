@@ -2,9 +2,14 @@
 
 import dotenv from 'dotenv';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Load environment variables from .env file in parent directory
-dotenv.config({ path: path.join(process.cwd(), '..', '.env') });
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables from .env file in project root (2 levels up from services/song/)
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 import { generateSong, generate_song, writeMP3FromBase64 } from './song_generation.js';
 
@@ -12,9 +17,13 @@ console.log('🎵 Testing Song Generation...\n');
 
 // Check if we have authentication set up
 const hasAccessToken = process.env.GOOGLE_ACCESS_TOKEN;
-const hasProjectId = process.env.GOOGLE_CLOUD_PROJECT;
+const hasProjectId = process.env.GOOGLE_CLOUD_PROJECT || '316838101533'; // Use fallback project ID
 
-if (!hasAccessToken || !hasProjectId) {
+console.log('🔍 Environment check:');
+console.log('   GOOGLE_ACCESS_TOKEN:', hasAccessToken ? '✅ SET' : '❌ NOT SET');
+console.log('   GOOGLE_CLOUD_PROJECT:', process.env.GOOGLE_CLOUD_PROJECT ? `✅ ${process.env.GOOGLE_CLOUD_PROJECT}` : `⚠️  Using fallback: ${hasProjectId}`);
+
+if (!hasAccessToken) {
     console.log('⚠️  Authentication not set up for API testing.\n');
     console.log('📋 To set up authentication:');
     console.log('   1. Create a .env file in the project root');
@@ -112,6 +121,27 @@ async function runTests() {
         
     } catch (error) {
         console.error('❌ Test 3 failed:', error.message);
+    }
+    
+    try {
+        // Test 4: Test the new my_song naming convention
+        console.log('Test 4: Test my_song naming convention');
+        
+        // Import the generateAndSaveSong function
+        const { generateAndSaveSong } = await import('./song_generation.js');
+        
+        const result = await generateAndSaveSong(
+            "A simple test melody for naming convention",
+            null, // Let it auto-generate the filename
+            null  // Use default region
+        );
+        
+        console.log('✅ Test 4 completed successfully!');
+        console.log('📊 Generated file:', result.filename);
+        console.log('📁 Full path:', result.filepath);
+        
+    } catch (error) {
+        console.error('❌ Test 4 failed:', error.message);
     }
 }
 
