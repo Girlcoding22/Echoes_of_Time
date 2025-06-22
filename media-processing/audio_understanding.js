@@ -1,11 +1,11 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import * as fs from "node:fs";
 import dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config();
 
-const LLM = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+const LLM = new GoogleGenerativeAI({ apiKey: process.env.GOOGLE_API_KEY });
 
 async function audio_processing(audio_path) {
   const audio_64 = encode_audio(audio_path);

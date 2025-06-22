@@ -20,7 +20,6 @@ app.use(cors());
 // Serve only specific static files that upload.html needs
 app.use('/script.js', express.static('frontend/script.js'));
 app.use('/style.css', express.static('frontend/style.css'));
-app.use('/monitor.js', express.static('frontend/monitor.js'));
 
 // Route for upload.html (root and explicit)
 app.get(['/', '/upload.html'], (req, res) => {
@@ -30,11 +29,6 @@ app.get(['/', '/upload.html'], (req, res) => {
 // Route for result page
 app.get('/result', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'result.html'));
-});
-
-// Route for monitor page
-app.get('/monitor', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'monitor.html'));
 });
 
 // Block access to all other frontend files

@@ -9,6 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileSize = document.getElementById('fileSize');
     const fileType = document.getElementById('fileType');
 
+    // Check if all required elements exist
+    if (!uploadArea || !fileInput || !chooseFileBtn || !processBtn || !fileInfo || !fileName || !fileSize || !fileType) {
+        console.error('Required DOM elements not found');
+        return;
+    }
+
     let selectedFile = null;
 
     // Hide file info initially
@@ -97,8 +103,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData();
             formData.append('file', file);
 
+            // Use relative URL or get from window.location for flexibility
+            const baseUrl = window.location.origin;
+            const uploadUrl = `${baseUrl}/api/upload`;
+
             // Send file to server
-            const response = await fetch('http://localhost:3000/api/upload', {
+            const response = await fetch(uploadUrl, {
                 method: 'POST',
                 body: formData
             });
