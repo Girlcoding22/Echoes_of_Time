@@ -80,8 +80,8 @@ export async function generateSongDescription(videoDescription, audioDescription
   const prompt = `Generate a song description based on the following description. Please specify genre and instrumentation. Very important to keep it short:\n\n${description}. Only provide one option.`;
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   const first_response = await model.generateContent(prompt);
-  const result = await response.response;
-  const second_response = await model.generateContent("Please make sure that this song description is short and includes genre and instrumentation and that it is one sentence. If is, return it as is. Else, modify it to match this criterion.")
-  return second_response.text();
+  const result = await first_response.response;
+  const second_response = await model.generateContent("Please make sure that this song description is short and includes genre and instrumentation and that it is one sentence. If is, return it as is. Else, modify it to match this criterion."+result.text())
+  return second_response.response.text();
 }
 
