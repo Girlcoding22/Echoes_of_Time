@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileName = document.getElementById('fileName');
     const fileSize = document.getElementById('fileSize');
     const fileType = document.getElementById('fileType');
+    const mediaPlayer = document.getElementById('mediaPlayer');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const videoPlayer = document.getElementById('videoPlayer');
 
     let selectedFile = null;
 
@@ -69,6 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
         fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
         fileType.textContent = `Type: ${file.type}`;
         fileInfo.style.display = 'block';
+        
+        // Show media player for audio/video files
+        showMediaPlayer(file);
     }
 
     // Format file size
@@ -78,6 +84,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Show media player for audio/video files
+    function showMediaPlayer(file) {
+        const fileType = file.type.toLowerCase();
+        const isAudio = fileType.startsWith('audio/');
+        const isVideo = fileType.startsWith('video/');
+        
+        if (isAudio || isVideo) {
+            const url = URL.createObjectURL(file);
+            
+            if (isAudio) {
+                audioPlayer.src = url;
+                audioPlayer.style.display = 'block';
+                videoPlayer.style.display = 'none';
+            } else if (isVideo) {
+                videoPlayer.src = url;
+                videoPlayer.style.display = 'block';
+                audioPlayer.style.display = 'none';
+            }
+            
+            mediaPlayer.style.display = 'block';
+        } else {
+            // Hide media player for non-media files
+            mediaPlayer.style.display = 'none';
+            audioPlayer.style.display = 'none';
+            videoPlayer.style.display = 'none';
+        }
     }
 
     // Process button click

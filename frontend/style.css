@@ -181,6 +181,20 @@ li:hover{
     margin: 5px 0;
     color: #666;
 }
+
+.media-player {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px 0;
+    border-left: 4px solid #28a745;
+}
+
+.media-player h3 {
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 10px;
+}
 /*the loading bar?*/
 .progress-bar {
     width: 100%;

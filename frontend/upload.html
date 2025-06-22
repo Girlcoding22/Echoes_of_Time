@@ -41,13 +41,27 @@
         <input type="file" id="fileInput" accept="*/*" style="display: none;">
         <div class="file-info" id="fileInfo" style="display: none;">
             <h3>Your File</h3>
-            <p id="fileName"></p>
-            <p id="fileSize"></p>
-            <p id="fileType"></p>
+            <div style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <p id="fileName"></p>
+                <p id="fileSize"></p>
+                <p id="fileType"></p>
+            </div>
+        </div>
+        
+        <div class="media-player" id="mediaPlayer" style="display: none;">
+            <h3>Preview</h3>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <audio id="audioPlayer" controls style="width: 25%; max-width: 25%; margin: 10px 0; display: none;">
+                    Your browser does not support the audio element.
+                </audio>
+                <video id="videoPlayer" controls style="width: 25%; max-width: 25%; max-height: 25vh; margin: 10px 0; display: none;">
+                    Your browser does not support the video element.
+                </video>
+            </div>
         </div>
         
         <button class="upload-btn" id="processBtn" disabled="">
-            Process File
+            Generate Soundtrack
         </button>
         
         
