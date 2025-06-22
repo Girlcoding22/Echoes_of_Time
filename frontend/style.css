@@ -23,3 +23,9 @@ ul{
     gap: 20px; 
     padding: 0; 
     margin: 0;}
+.quote{
+    font-style: italic;
+    border: black 2px dashed;
+    display: inline;
+    padding: 0 2px;
+}
