@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/Users/ggrojas27/Documents/GitHub/SSG_CalHacks2025/frontend/style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
 </head>
 <body>
-    <div class="upload-container">
+    <h1>SSG: My Life's a Song</h1>
+        <ul>
+            <li>Home</li>
+            <li>About</li>
+        </ul>
+    <hr>
+    
+
+    <div class="upload-container">    
         <h1>File Upload</h1>
         <p>Upload any file to process with AI</p>
         
@@ -17,26 +26,20 @@
                     <polyline points="7,10 12,15 17,10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                <p>Drag and drop your file here</p>
-                <p>or</p>
+                <p>Drag and drop your file here or</p>
                 <button class="upload-btn" id="chooseFileBtn">
                     Choose File
                 </button>
-            </div>
-        </div>
-        
-        <input type="file" id="fileInput" accept="*/*">
-        
-        <div class="file-info" id="fileInfo">
-            <h3>Selected File:</h3>
-            <p id="fileName"></p>
-            <p id="fileSize"></p>
-            <p id="fileType"></p>
-        </div>
-        
-        <button class="upload-btn" id="processBtn" disabled>
-            Process File
-        </button>
+                <input type="file" id="fileInput" accept="*/*" style="display: none;">
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <h3>Selected File:</h3>
+                    <p id="fileName"></p>
+                    <p id="fileSize"></p>
+                    <p id="fileType"></p>
+                </div>
+                <button class="upload-btn" id="processBtn" disabled>
+                    Process File
+                </button>
         
         <div class="progress-bar" id="progressBar">
             <div class="progress-fill" id="progressFill"></div>

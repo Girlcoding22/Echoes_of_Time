@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/Users/ggrojas27/Documents/GitHub/SSG_CalHacks2025/frontend/style.css">
+    <meta charset="UTF-8" />
+    <title>Result!</title>
+</head>
+<body>
+    <h1>SSG: My Life's a Song</h1>
+        <ul>
+            <li>Home</li>
+            <li>About</li>
+        </ul>
+    <hr>
+    <!--makea loading screen, then show this up!-->
+    <p2 class="p p2">Here lies an image!</p2>
+    <button class="button button2">Cancel</button>
+    <br>
+    <br>
+    <!--insert at random a quote in the list-->
+    <script>
+    const quotes = [
+        "The first clip ever aired on MTV is the Buggles Video Killed the Radio Star. The first clip ever aired on MTV Europe is Dire Straits’ Money For Nothing. (Mishal, Or. “40 Amazing Music Facts That Will Shake Your Ears.”)",
+        "Only three music companies are responsible for over 80% of the music you listen to Sony BMG, Warner Music Group, and Universal Music Group. (Mishal, Or. “40 Amazing Music Facts That Will Shake Your Ears.”)",
+        "Tame Impala is just one guy"
+    ];
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    document.write(`<p class="quote">${randomQuote}</p>`);
+    </script>
+</body>
+</html>

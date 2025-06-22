@@ -1,0 +1,25 @@
+button{
+    background-color: #BC74F4;
+    color: black;
+}
+button:hover{
+    background-color: #d4bbf1;
+}
+hr{
+    border: 1px solid black; width: 100%;
+}
+.button2{
+    background-color: lightgrey;
+    color: black;
+    text-align: left;
+}
+.p2{
+    padding-right: 50%;
+    color: green;
+}
+ul{
+    display: flex; 
+    list-style: none; 
+    gap: 20px; 
+    padding: 0; 
+    margin: 0;}
