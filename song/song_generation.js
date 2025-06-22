@@ -1,12 +1,82 @@
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load environment variables from .env file in parent directory
+dotenv.config({ path: path.join(process.cwd(), '..', '.env') });
 
 /**
  * Song Generation using Google's Lyria Model
  * This function generates music using Google's AI Platform
  */
+
+/**
+ * Write base64 audio data to an MP3 file
+ * @param {string} base64Audio - Base64 encoded audio data
+ * @param {string} filename - Output filename (without extension)
+ * @param {string} outputDir - Output directory (default: 'generated-songs')
+ * @returns {Promise<string>} - Path to the generated MP3 file
+ */
+async function writeMP3FromBase64(base64Audio, filename = 'generated-song', outputDir = 'generated-songs') {
+    try {
+        // Create output directory if it doesn't exist
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
+
+        // Generate unique filename with timestamp
+        const timestamp = Date.now();
+        const mp3Filename = `${filename}-${timestamp}.mp3`;
+        const mp3Path = path.join(outputDir, mp3Filename);
+
+        // Convert base64 to buffer and write to file
+        const audioBuffer = Buffer.from(base64Audio, 'base64');
+        fs.writeFileSync(mp3Path, audioBuffer);
+
+        console.log(`✅ MP3 file created: ${mp3Path}`);
+        console.log(`📁 File size: ${(audioBuffer.length / 1024 / 1024).toFixed(2)} MB`);
+
+        return mp3Path;
+    } catch (error) {
+        console.error('❌ Error writing MP3 file:', error);
+        throw error;
+    }
+}
+
+/**
+ * Generate a song and save it as an MP3 file
+ * @param {string} prompt - The music description prompt
+ * @param {string} filename - Output filename (without extension)
+ * @param {string} outputDir - Output directory
+ * @returns {Promise<Object>} - Object containing the API response and file path
+ */
+async function generate_song(prompt, filename = 'generated-song', outputDir = 'generated-songs') {
+    try {
+        console.log('🎵 Generating song...');
+        console.log('📝 Prompt:', prompt);
+        
+        const song_json = await generateSong(prompt);
+        
+        if (!song_json.predictions || !song_json.predictions[0] || !song_json.predictions[0].audioContent) {
+            throw new Error('No audio content found in the response');
+        }
+        
+        const audio_base64 = song_json.predictions[0].audioContent;
+        const mp3Path = await writeMP3FromBase64(audio_base64, filename, outputDir);
+        
+        console.log('🎉 Song generation and file creation completed!');
+        
+        return {
+            response: song_json,
+            mp3Path: mp3Path,
+            filename: path.basename(mp3Path)
+        };
+        
+    } catch (error) {
+        console.error('❌ Error in generate_song:', error);
+        throw error;
+    }
+}
 
 /**
  * Generate a song using Google's Lyria model
@@ -97,7 +167,6 @@ async function getAccessToken() {
     }
 }
 
-
 // Export functions for use in other modules
-export { generateSong};
+export { generateSong, generate_song, writeMP3FromBase64 };
 
