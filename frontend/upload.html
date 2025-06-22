@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
@@ -10,8 +10,8 @@
     <div class="headerALL" >
         <h1>SSG: My Life's a Song</h1>
         <ul>
-            <li>Home</li>
-            <li>About</li>
+            <li onclick="window.location.href='upload.html'">Home</li>
+            <li onclick="window.location.href='about.html'">About</li>
         </ul>
     </div>
     <hr>
@@ -41,7 +41,7 @@
             <p id="fileType"></p>
         </div>
         
-        <button class="upload-btn" id="processBtn" disabled>
+        <button class="upload-btn" id="processBtn" disabled="" onclick="window.location.href='result.html'">
             Process File
         </button>
         
