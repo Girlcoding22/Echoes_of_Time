@@ -181,4 +181,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 2000); // Check every 2 seconds
     }
-}); 
+});
+
+// //This script is for the loading screen functionality
+// var myVar;
+
+// function loadTimer() {
+//   myVar = setTimeout(showPage, 3000);
+// }
+
+// function showPage() {
+//   document.getElementById("Loader").style.display = "none";
+//   document.getElementById("myDiv").style.display = "block";
+// }

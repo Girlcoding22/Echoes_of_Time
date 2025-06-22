@@ -2,10 +2,11 @@
 <html>
 <head>
     <link rel="stylesheet" href="/Users/ggrojas27/Documents/GitHub/SSG_CalHacks2025/frontend/style.css">
+    <link rel="script" href="/Users/ggrojas27/Documents/GitHub/SSG_CalHacks2025/frontend/script.js">
     <meta charset="UTF-8" />
     <title>Result!</title>
 </head>
-<body>
+<body onload="loadTimer()" style="margin:0;">
     <div class="headerALL" >
         <h1>SSG: My Life's a Song</h1>
         <ul>
@@ -14,6 +15,7 @@
         </ul>
     </div>
     <hr>
+    
     <!--make a loading screen, then show this up!-->
     <div class="loading-screen">
             <div>
@@ -36,13 +38,25 @@
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     document.write(`<p class="quote">${randomQuote}</p>`);
     </script>
-
-
     <!---end of the loading screen--->
     <!--don't have anything under this show up until the end of model loading-->
-        <!-- <h2>Result</h2>    
-        <p2 class="p p2">Here lies an image!</p2>
-        
-         -->
+    <div style="display:none;" id="myDiv" class="animate-bottom">
+        <h2>Result</h2>    
+        <p2 class="p p2">Here lies an image!</p2>>
+    </div>    
+
+    <script>
+var myVar;
+
+function myFunction() {
+  myVar = setTimeout(showPage, 3000);
+}
+
+function showPage() {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("myDiv").style.display = "block";
+}
+</script>
+
 </body>
 </html>
