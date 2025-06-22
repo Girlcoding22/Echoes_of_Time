@@ -1,4 +1,4 @@
-// File upload functionality
+// File upload functionality with alert-based monitoring
 document.addEventListener('DOMContentLoaded', function() {
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
@@ -8,14 +8,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileName = document.getElementById('fileName');
     const fileSize = document.getElementById('fileSize');
     const fileType = document.getElementById('fileType');
-    const progressBar = document.getElementById('progressBar');
-    const progressFill = document.getElementById('progressFill');
 
     let selectedFile = null;
 
     // Hide file info initially
     fileInfo.style.display = 'none';
-    progressBar.style.display = 'none';
 
     // Choose file button click
     chooseFileBtn.addEventListener('click', () => {
@@ -93,9 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Upload file function
     async function uploadFile(file) {
         try {
-            // Show progress bar
-            progressBar.style.display = 'block';
-            progressFill.style.width = '0%';
+            // Show upload starting alert
+            alert('Starting file upload...');
+            
             processBtn.disabled = true;
             processBtn.textContent = 'Processing...';
 
@@ -115,14 +112,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const result = await response.json();
             
-            // Complete progress
-            progressFill.style.width = '100%';
-
+            // Show upload completion alert
+            alert(`File uploaded successfully!\nStored as: ${result.filename}\n\nProcessing will now begin automatically.`);
+            
             // Handle response
             if (result.success) {
-                alert(`File uploaded successfully!\nStored as: ${result.filename}`);
-                // Redirect to results page or show results
-                window.location.href = './generated.html';
+                // Start monitoring processing status
+                monitorProcessingStatus(result.filename);
+                
             } else {
                 throw new Error(result.message || 'Upload failed');
             }
@@ -134,23 +131,53 @@ document.addEventListener('DOMContentLoaded', function() {
             // Reset UI
             processBtn.disabled = false;
             processBtn.textContent = 'Process File';
-            progressBar.style.display = 'none';
         }
     }
 
-    // Optional: Add actual API upload function
-    /*
-    async function uploadToAPI(formData) {
-        const response = await fetch('/api/upload-audio', {
-            method: 'POST',
-            body: formData
-        });
+    // Monitor processing status
+    function monitorProcessingStatus(filename) {
+        console.log(`🔍 Starting to monitor processing for: ${filename}`);
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        // Show processing started alert
+        alert(`Processing started for: ${filename}\n\nYou will be notified when processing is complete.`);
         
-        return await response.json();
+        // Poll for status updates
+        const statusInterval = setInterval(async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/processing-status/${filename}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success && data.status) {
+                        // Show status update alert
+                        if (data.status.status === 'processing') {
+                            console.log(`Processing: ${data.status.progress}`);
+                        } else if (data.status.status === 'completed') {
+                            clearInterval(statusInterval);
+                            console.log(`✅ Processing finished for: ${filename}`);
+                            
+                            // Show completion alert with results
+                            let resultMessage = `Processing completed for: ${filename}\n\n`;
+                            if (data.status.result) {
+                                resultMessage += `Type: ${data.status.result.type}\n\n`;
+                                resultMessage += `Description:\n${data.status.result.description}`;
+                            } else {
+                                resultMessage += `Status: ${data.status.progress}`;
+                            }
+                            alert(resultMessage);
+                            
+                        } else if (data.status.status === 'error') {
+                            clearInterval(statusInterval);
+                            console.log(`❌ Processing failed for: ${filename}`);
+                            
+                            // Show error alert
+                            alert(`Processing failed for: ${filename}\n\nError: ${data.status.error || 'Unknown error'}`);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking processing status:', error);
+            }
+        }, 2000); // Check every 2 seconds
     }
-    */
 }); 

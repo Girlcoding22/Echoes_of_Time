@@ -3,16 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/audio_understanding.js",
-    "dev": "tsx audio_understanding.ts"
+    "start": "node audio_understanding.js",
+    "dev": "node audio_understanding.js"
   },
   "dependencies": {
-    "@google/genai": "^1.6.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.19.1",
-    "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "@google/genai": "^1.6.0",
+    "@google/generative-ai": "^0.24.1"
   }
 }
