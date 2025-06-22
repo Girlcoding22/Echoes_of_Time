@@ -1,9 +1,14 @@
+body{
+    background-color: #ECF0FC;
+}
+
 button{
-    background-color: #bc74f4;
-    color: black;
+    background-color: #6488ea;
+    /* color: black; */
 }
 button:hover{
     background-color: #d4bbf1;
+    color: white;
 }
 .button2{
     background-color: lightgrey;
@@ -19,11 +24,14 @@ hr{
 }
 h1{
     margin: 0;
-    font-family: 'Roboto Mono', monospace;
-    text-shadow: 2px 2px 4px rgba(188, 116, 244, 0.8), 
-                 4px 4px 8px rgba(212, 187, 241, 0.6),
-                 6px 6px 12px rgba(0, 0, 0, 0.3);
-    color: #333;
+    /* font-family: 'Roboto Mono', monospace; */
+    /* font-family: 'Bubblegum Sans', cursive; */
+   font-family: 'Tektur', sans-serif;
+    text-shadow: 2px 2px 4px rgba(100, 136, 234, 0.8), 
+                 4px 4px 8px rgba(100, 136, 234, 0.6),
+                 6px 6px 12px rgba(22, 30, 52, 0.3);
+    color: #0B0F1A;
+    font-size: 3em;
 }
 h2{
     font-size:2em;
@@ -34,12 +42,14 @@ h2{
     display: flex;
     align-items: center; 
     gap: 20px;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 
 .catchphrase {
     font-family: 'Archivo', sans-serif;
     font-size: 1.2em;
-    color: #bc74f4;
+    color: #6488ea;
     font-weight: 600;
     margin: 0;
     text-shadow: 1px 1px 2px rgba(188, 116, 244, 0.3);
@@ -58,8 +68,20 @@ ul{
     padding: 0; 
     margin: 0;
 }
+li{
+    padding: 10px;
+    background-color: #6488ea;
+    color: white;
+    /* background-color:rgba(188,116,244,0.3); */
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(74, 45, 96, 0.896);
+    border-radius: 10px;
+    font-size: larger;
+}
 li:hover{
-    color: #bc74f4;
+    color: white;
+    background-color: #d4bbf1;
     font-family: 'Archivo', sans-serif;
 }
 .quote{
@@ -75,7 +97,7 @@ li:hover{
 }
 
 .upload-area {
-    border: 2px dashed #bc74f4;
+    border: 2px dashed #6488ea;
     border-radius: 10px;
     padding: 40px;
     text-align: center;
@@ -92,7 +114,7 @@ li:hover{
 
 .upload-area svg {
     margin-bottom: 15px;
-    color: #bc74f4;
+    color: #6488ea;
 }
 
 .upload-area p {
@@ -101,7 +123,7 @@ li:hover{
 }
 
 .upload-btn {
-    background-color: #bc74f4;
+    background-color: #6488ea;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -126,7 +148,7 @@ li:hover{
     padding: 15px;
     border-radius: 5px;
     margin: 20px 0;
-    border-left: 4px solid #bc74f4;
+    border-left: 4px solid #6488ea;
 }
 
 .file-info h3 {
@@ -151,14 +173,14 @@ li:hover{
 
 .progress-fill {
     height: 100%;
-    background-color: #bc74f4;
+    background-color: #6488ea;
     width: 0%;
     transition: width 0.3s ease;
 }
 .Loader {
   border: 16px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 16px solid #bc74f4;
+  border-top: 16px solid #6488ea;
   width: 120px;
   height: 120px;
   margin-left: 43%;
@@ -210,7 +232,7 @@ li:hover{
 .profile {
     text-align: center;
     max-width: 250px;
-    }
+}
 .image-container {
     position: relative;
     display: inline-block; /* or block, as needed */
@@ -227,7 +249,7 @@ li:hover{
     position: absolute;
     border-radius: 50%;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(188, 116, 244, 0.5); /* purple with 50% opacity */
+    background: rgba(166, 187, 243, 0.5); /* purple with 50% opacity */
     
     /* Text styling and centering */
     color: white;
