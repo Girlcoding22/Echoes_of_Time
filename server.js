@@ -4,9 +4,9 @@ import path from 'path';
 import fs from 'fs';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-import { audio_processing, describe_audio } from './audio/audio_understanding.js';
-import { describe_video } from './audio/video_understanding.js';
-import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './audio/audio-utils.js';
+import { audio_processing, describe_audio } from './media-processing/audio_understanding.js';
+import { describe_video } from './media-processing/video_understanding.js';
+import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './media-processing/audio-utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
