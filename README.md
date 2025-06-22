@@ -57,12 +57,17 @@ As the game progresses, the camera reveals additional elements of the park setti
 ### Pre-Reqs
 
 * Node.js: 18.x or later
-* Python: 3.9 or later
-* Git: for cloning repository
+* Set your API Keys for Gemini in environment
+* Enable VertexAI API and create Google Cloud Project ID (see .env template to follow variable signatures)
+* Git: for cloning the repository
 
 ### Environment Variables
 
 - GOOGLE_API_KEY: Your Google API key (required) and all it's other Google API features.Technical Details
+- NODE_ENV
+- PORT
+- GOOGLE_ACCESS_TOKEN
+- GOOGLE_CLOUD_PROJECT: where VertexAI and Lyria are enabled
 
 ### Architecture
 
@@ -71,5 +76,5 @@ As the game progresses, the camera reveals additional elements of the park setti
 
 ### Models Used
 
-- **Google Gemini:** Used for AI powered adjudicaton and Video & Audio analysis
-- **Lyria:** Music Generation
+- **Google Gemini 2.5-flash:** Used for AI powered adjudicaton and Video & Audio analysis
+- **Lyria-002:** Music Generation from text
