@@ -24,6 +24,9 @@ app.use('/script.js', express.static('frontend/script.js'));
 app.use('/style.css', express.static('frontend/style.css'));
 app.use('/monitor.js', express.static('frontend/monitor.js'));
 
+// Serve assets folder for images
+app.use('/assets', express.static('frontend/assets'));
+
 // Route for upload.html (root and explicit)
 app.get(['/', '/upload.html'], (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'upload.html'));
@@ -32,6 +35,11 @@ app.get(['/', '/upload.html'], (req, res) => {
 // Route for result page
 app.get('/result', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'result.html'));
+});
+
+// Route for about page
+app.get('/about.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'about.html'));
 });
 
 // Route for monitor page
