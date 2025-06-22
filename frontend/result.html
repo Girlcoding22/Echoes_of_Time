@@ -1,62 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="/Users/ggrojas27/Documents/GitHub/SSG_CalHacks2025/frontend/style.css">
-    <link rel="script" href="/Users/ggrojas27/Documents/GitHub/SSG_CalHacks2025/frontend/script.js">
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8" />
-    <title>Result!</title>
+    <title>Processing Results</title>
 </head>
-<body onload="loadTimer()" style="margin:0;">
+<body onload="loadResults()" style="margin:0;">
     <div class="headerALL" >
         <h1>SSG: My Life's a Song</h1>
         <ul>
-            <li>Home</li>
+            <li><a href="/">Home</a></li>
             <li>About</li>
         </ul>
     </div>
     <hr>
     
-    <!--make a loading screen, then show this up!-->
-    <div class="loading-screen">
-            <div>
-                <h2>Loading...</h2>
-                <div class="Loader"></div>
-            </div>
-            <button class="button button2">Cancel</button>
+    <!-- Loading screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div>
+            <h2>Processing Your File...</h2>
+            <div class="Loader"></div>
         </div>
-        <!-- <h2>Loading...</h2>
-        <div class="Loader"></div> -->
+        <p class="loading-text">Please wait while we analyze your audio/video content.</p>
+        <p id="progressText" style="color: #666; font-size: 14px; margin-top: 10px;">Starting analysis...</p>
+    </div>
+    
+    <!-- Results display -->
+    <div id="resultsContainer" style="display:none;" class="animate-bottom">
+        <h2>Processing Results</h2>
+        <div id="resultsContent"></div>
+        <div style="margin-top: 20px;">
+            <button onclick="window.location.href='/'" class="button button2">Process Another File</button>
+        </div>
+    </div>
+
+    <script>
+        async function loadResults() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filename = urlParams.get('filename');
+            const isError = urlParams.get('error') === 'true';
+            
+            if (!filename) {
+                showError('No filename provided');
+                return;
+            }
+            
+            // Start polling for status updates
+            pollForResults(filename);
+        }
         
-        <p class="loading-text">Please wait while we process your request.</p>
-        <!--insert at random a quote in the list-->
-    <script>
-    const quotes = [
-        "The first clip ever aired on MTV is the Buggles Video Killed the Radio Star. The first clip ever aired on MTV Europe is Dire Straits’ Money For Nothing. (Mishal, Or. “40 Amazing Music Facts That Will Shake Your Ears.”)",
-        "Only three music companies are responsible for over 80% of the music you listen to Sony BMG, Warner Music Group, and Universal Music Group. (Mishal, Or. “40 Amazing Music Facts That Will Shake Your Ears.”)",
-        "Tame Impala is just one guy"
-    ];
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    document.write(`<p class="quote">${randomQuote}</p>`);
+        async function pollForResults(filename) {
+            let attempts = 0;
+            const maxAttempts = 300; // 10 minutes max (300 * 2 seconds)
+            
+            const pollInterval = setInterval(async () => {
+                attempts++;
+                
+                try {
+                    // First check processing status for progress updates
+                    const statusResponse = await fetch(`/api/processing-status/${filename}`);
+                    if (statusResponse.ok) {
+                        const statusData = await statusResponse.json();
+                        
+                        if (statusData.success && statusData.status) {
+                            // Update progress text
+                            const progressText = document.getElementById('progressText');
+                            if (progressText && statusData.status.progress) {
+                                progressText.textContent = statusData.status.progress;
+                            }
+                            
+                            if (statusData.status.status === 'completed') {
+                                clearInterval(pollInterval);
+                                // Get the final results
+                                const resultsResponse = await fetch(`/api/processing-results/${filename}`);
+                                const resultsData = await resultsResponse.json();
+                                
+                                if (resultsData.success && resultsData.result) {
+                                    displayResults(resultsData.result, filename);
+                                } else {
+                                    showError('Processing completed but no results available');
+                                }
+                            } else if (statusData.status.status === 'error') {
+                                clearInterval(pollInterval);
+                                showError(statusData.status.error || 'Processing failed');
+                            }
+                        }
+                    }
+                    
+                    // Check if we've exceeded max attempts
+                    if (attempts >= maxAttempts) {
+                        clearInterval(pollInterval);
+                        showError('Processing is taking longer than expected. Please try again.');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error polling for results:', error);
+                    if (attempts >= maxAttempts) {
+                        clearInterval(pollInterval);
+                        showError('Failed to check processing status');
+                    }
+                }
+            }, 2000); // Check every 2 seconds
+        }
+        
+        function displayResults(result, filename) {
+            const container = document.getElementById('resultsContainer');
+            const content = document.getElementById('resultsContent');
+            
+            let html = `<h3>File: ${filename}</h3>`;
+            html += `<p><strong>Type:</strong> ${result.type}</p>`;
+            
+            if (result.type === 'video') {
+                html += `
+                    <div style="margin: 20px 0;">
+                        <h4>🎵 Audio Analysis</h4>
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                            ${result.audioDescription.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                    <div style="margin: 20px 0;">
+                        <h4>🎬 Video Analysis</h4>
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                            ${result.videoDescription.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `;
+            } else if (result.type === 'audio') {
+                html += `
+                    <div style="margin: 20px 0;">
+                        <h4>🎵 Audio Analysis</h4>
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                            ${result.description.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="margin: 20px 0;">
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                            ${result.description}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `<p style="color: #666; font-style: italic;">🗑️ File has been automatically deleted to save storage space.</p>`;
+            
+            content.innerHTML = html;
+            
+            // Hide loading, show results
+            document.getElementById('loadingScreen').style.display = 'none';
+            container.style.display = 'block';
+        }
+        
+        function showError(message) {
+            const container = document.getElementById('resultsContainer');
+            const content = document.getElementById('resultsContent');
+            
+            content.innerHTML = `
+                <div style="color: #d32f2f; background: #ffebee; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                    <h4>❌ Error</h4>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            // Hide loading, show error
+            document.getElementById('loadingScreen').style.display = 'none';
+            container.style.display = 'block';
+        }
     </script>
-    <!---end of the loading screen--->
-    <!--don't have anything under this show up until the end of model loading-->
-    <div style="display:none;" id="myDiv" class="animate-bottom">
-        <h2>Result</h2>    
-        <p2 class="p p2">Here lies an image!</p2>>
-    </div>    
-
-    <script>
-var myVar;
-
-function loadTimer() {
-  myVar = setTimeout(showPage, 3000);
-}
-
-function showPage() {
-  document.getElementById("loader").style.display = "none";
-  document.getElementById("myDiv").style.display = "block";
-}
-</script>
-
 </body>
 </html>

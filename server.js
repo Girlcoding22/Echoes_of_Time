@@ -27,6 +27,11 @@ app.get(['/', '/upload.html'], (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'upload.html'));
 });
 
+// Route for result page
+app.get('/result', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'result.html'));
+});
+
 // Route for monitor page
 app.get('/monitor', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'monitor.html'));
@@ -259,6 +264,22 @@ app.get('/api/processing-status/:filename', (req, res) => {
         res.json({ success: true, status });
     } else {
         res.json({ success: false, message: 'File not found in processing queue' });
+    }
+});
+
+// Get processing results for a specific file
+app.get('/api/processing-results/:filename', (req, res) => {
+    const { filename } = req.params;
+    const status = processingStatus.get(filename);
+    
+    if (status && status.status === 'completed' && status.result) {
+        res.json({ success: true, result: status.result });
+    } else if (status && status.status === 'error') {
+        res.json({ success: false, error: status.error || 'Processing failed' });
+    } else if (status && status.status === 'processing') {
+        res.json({ success: false, message: 'Processing still in progress', progress: status.progress });
+    } else {
+        res.json({ success: false, message: 'File not found or no results available' });
     }
 });
 

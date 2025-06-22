@@ -111,9 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Handle response
             if (result.success) {
-                // Start monitoring processing status
-                monitorProcessingStatus(result.filename);
-                
+                // Redirect immediately to result page with filename
+                window.location.href = `/result?filename=${encodeURIComponent(result.filename)}`;
             } else {
                 throw new Error(result.message || 'Upload failed');
             }
@@ -121,65 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Upload error:', error);
             alert('Error processing file: ' + error.message);
-        } finally {
-            // Reset UI
+            
+            // Reset UI on error
             processBtn.disabled = false;
             processBtn.textContent = 'Process File';
         }
-    }
-
-    // Monitor processing status
-    function monitorProcessingStatus(filename) {
-        console.log(`🔍 Starting to monitor processing for: ${filename}`);
-        
-        // Poll for status updates
-        const statusInterval = setInterval(async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/api/processing-status/${filename}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    if (data.success && data.status) {
-                        if (data.status.status === 'processing') {
-                            console.log(`Processing: ${data.status.progress}`);
-                        } else if (data.status.status === 'completed') {
-                            clearInterval(statusInterval);
-                            console.log(`✅ Processing finished for: ${filename}`);
-                            
-                            // Show completion alert with results
-                            let resultMessage = `Processing completed for: ${filename}\n\n`;
-                            if (data.status.result) {
-                                resultMessage += `Type: ${data.status.result.type}\n\n`;
-                                
-                                if (data.status.result.type === 'video') {
-                                    // Enhanced display for video files
-                                    resultMessage += `🎵 AUDIO ANALYSIS:\n${data.status.result.audioDescription}\n\n`;
-                                    resultMessage += `🎬 VIDEO ANALYSIS:\n${data.status.result.videoDescription}\n\n`;
-                                    resultMessage += `🗑️ File has been automatically deleted to save storage space.`;
-                                } else {
-                                    // Standard display for audio and other files
-                                    resultMessage += `Description:\n${data.status.result.description}\n\n`;
-                                    resultMessage += `🗑️ File has been automatically deleted to save storage space.`;
-                                }
-                            } else {
-                                resultMessage += `Status: ${data.status.progress}\n\n`;
-                                resultMessage += `🗑️ File has been automatically deleted to save storage space.`;
-                            }
-                            alert(resultMessage);
-                            
-                        } else if (data.status.status === 'error') {
-                            clearInterval(statusInterval);
-                            console.log(`❌ Processing failed for: ${filename}`);
-                            
-                            // Show error alert
-                            alert(`Processing failed for: ${filename}\n\nError: ${data.status.error || 'Unknown error'}`);
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking processing status:', error);
-            }
-        }, 2000); // Check every 2 seconds
     }
 });
 
