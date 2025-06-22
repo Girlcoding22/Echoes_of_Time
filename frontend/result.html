@@ -125,6 +125,28 @@
                         </div>
                     </div>
                 `;
+                
+                // Add generated song section if available
+                if (result.songFile) {
+                    html += `
+                        <div style="margin: 20px 0;">
+                            <h4>🎵 Generated Song</h4>
+                            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                                <p><strong>Song File:</strong> ${result.songFile}</p>
+                                <audio controls style="width: 100%; margin-top: 10px;">
+                                    <source src="/generated-songs/${result.songFile}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                                    <a href="/generated-songs/${result.songFile}" download="${result.songFile}" 
+                                       style="color: #bc74f4; text-decoration: none;">
+                                        📥 Download Song
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                }
             } else if (result.type === 'audio') {
                 html += `
                     <div style="margin: 20px 0;">
@@ -144,7 +166,7 @@
                 `;
             }
             
-            html += `<p style="color: #666; font-style: italic;">🗑️ File has been automatically deleted to save storage space.</p>`;
+            html += `<p style="color: #666; font-style: italic;">🗑️ Original file has been automatically deleted to save storage space.</p>`;
             
             content.innerHTML = html;
             

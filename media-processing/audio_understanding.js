@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-const LLM = new GoogleGenerativeAI({ apiKey: process.env.GOOGLE_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 async function audio_processing(audio_path) {
   const audio_64 = encode_audio(audio_path);
@@ -20,24 +20,26 @@ function encode_audio(audio_path) {
 
 async function describe_audio(audio_64) {
   try {
-    const contents = [
-      { text: "This is the audiotrack for someone's day. Please provide a description of this day." },
+    // Create the model
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+    
+    // Create the prompt
+    const prompt = "This is the audiotrack for someone's day. Please provide a description of this day.";
+    
+    // Generate content with the audio
+    const result = await model.generateContent([
+      prompt,
       {
         inlineData: {
-          mimeType: "audio/mp3",
           data: audio_64,
-        },
-      },
-    ];
+          mimeType: "audio/mp3"
+        }
+      }
+    ]);
     
-    const request = {
-      model: "gemini-2.5-flash",
-      contents: contents,
-    };
+    const response = await result.response;
+    const text_response = response.text();
     
-    const response = await LLM.models.generateContent(request);
-    
-    const text_response = response.text;
     // Handle the response
     console.log("Audio processing response:", text_response);
     return text_response;

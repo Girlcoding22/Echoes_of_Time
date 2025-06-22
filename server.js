@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { audio_processing, describe_audio } from './media-processing/audio_understanding.js';
 import { describe_video } from './media-processing/video_understanding.js';
 import { extractAudioFromMP4, extractAudioFromMP4Alternative } from './media-processing/audio-utils.js';
+import { generate_song } from './song/song_generation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +21,9 @@ app.use(cors());
 // Serve only specific static files that upload.html needs
 app.use('/script.js', express.static('frontend/script.js'));
 app.use('/style.css', express.static('frontend/style.css'));
+
+// Serve generated songs
+app.use('/generated-songs', express.static('generated-songs'));
 
 // Route for upload.html (root and explicit)
 app.get(['/', '/upload.html'], (req, res) => {
@@ -144,13 +148,24 @@ async function processUploadedFile(filePath, filename) {
             console.log('✅ Video description completed:', video_description);
             
             processingStatus.set(filename, {
+                status: 'processing',
+                progress: 'Generating song based on video content...'
+            });
+            
+            console.log('🎵 Generating song based on video description...');
+            const song_result = await generate_song(video_description, `song-${filename}`, 'generated-songs');
+            console.log('✅ Song generation completed:', song_result.filename);
+            
+            processingStatus.set(filename, {
                 status: 'completed',
-                progress: 'Video processing completed',
+                progress: 'Video processing and song generation completed',
                 result: { 
                     type: 'video', 
                     audioDescription: audio_description,
                     videoDescription: video_description,
-                    combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+                    songFile: song_result.filename,
+                    songPath: song_result.mp3Path,
+                    combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}\n\nGENERATED SONG:\n${song_result.filename}`
                 },
                 endTime: new Date()
             });
@@ -163,7 +178,9 @@ async function processUploadedFile(filePath, filename) {
                 type: 'video', 
                 audioDescription: audio_description,
                 videoDescription: video_description,
-                combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}`
+                songFile: song_result.filename,
+                songPath: song_result.mp3Path,
+                combinedDescription: `AUDIO ANALYSIS:\n${audio_description}\n\nVIDEO ANALYSIS:\n${video_description}\n\nGENERATED SONG:\n${song_result.filename}`
             };
             
         } else {

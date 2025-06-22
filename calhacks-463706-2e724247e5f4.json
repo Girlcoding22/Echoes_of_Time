@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "calhacks-463706",
+  "private_key_id": "2e724247e5f43ffd21b8bfd0a993411b46323370",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC+PUe7n1AHJFPh\ns5yJlvQo/vmpv2kSdHZGyWY1eQ5/O4BMKglC4cBGJmIhHo1dAnGRV3DbyRLe4bYQ\nVpz3cTXs+CQaT1vRBrQ+5zGC2OYNx8/lGVuIT6MU/0g86izSIrGoJyh3cxnqA0l4\nul0cMyiCbPgu5gIfQzKSSjYG7FjSCswTF8nXVs4nVSrF1T43t5xtG5eNX5bcnHPv\nlqGiq28A1FxI9df6us4ZiJCLQrKfmDuDcWIvQLS0nrXoVCvNWdUU+hu/UU5ctiiH\nFz5VfFaDdSmD66JTm/+syBps2Zm5ufvkmWvmjfVMyVrqpXfY/YYlV/L1YJ/PQOVV\nFC50VBEHAgMBAAECggEANjgz9iMBRY/SgmzVDBfkbbzB/mHJ+hMMVL947HucqKGW\nPt7qNdAuoy+0XxkclCoqoRBpX5LO2Iw+/igZY6K2Clxsubztf8Un4Re2ckMMSlgt\nBfA0uMRtyAG8HnRlotx1guXqMCUzeRFHwutmty9Td9zD3WX7q9pUkwIopM9+vxoL\nMwS6SudHjTRbWamgzCCe2rguCsxMvIK9A/GjuiAqhb0mgdCVs6OkT4oQDK82Ebiy\nGsjxm5YJ189P9RoygyCBmrEDOgxErGr5ZYzFsWKqDJyqaqFOPkZNBgeyw/D6JPmp\n0I3RTOZK5sa4jDEkpYAjyVCIzCOO/pjzbE6L8vnCaQKBgQD1KlrDPvrDllRkpuua\nT7guKsdn4gk7Ww6ajrdHNjhqnDpbK3vc7HrQBq/VKHeTGa/OYAatxUIBcYVIk7Iu\nEP5SAc7+xyU1rRzY47LPml/tRITY9yKwXpikW78Co/CecQhvm+29yBXny6ZVHiBd\nrTDPwK4vA7cLsVMsFRuboTD4+QKBgQDGpYbyMUyfgyCauoM5yYLDzESzwBw+yB/j\nhmAu+ScEgQEKJ4q/z2XzaH6fkSfp1RMdYr/teFQ3oEEPW/2VhxVkGPba1s5Y3B6W\nPEaj3YcW612r1P8nC2vREgxkVCKUA0/Ere7AIAz5QOPgZAMbWsrPcNmRqaJ2qxVT\nX2X5lsnZ/wKBgDDPlfJ5f4OhUnwXn6DBbnIComDUZ/IhVu7+qw7KhMD1CclNBwQd\nMPZp3mgZ/nSTEKWOCMZgF5wh9d9VSIxTZc79/TBMheQB61RjQR6EJcUfdzObQJTM\nwKc4fPcRnL5u0rcl3FeElpfnu94GeXstGCLEwekqXC8/xsdoDG8X0KBBAoGAGLJz\nuKDQefR/lT0jG4gmLdmzoPV9jYCsFkmao7xuUW0IiA6qfXZ3om+XbpdJcxT+r2Sb\noBaZweC2tgYl3PVSf4NrDYIvXXTgiKUt0ymzpfHVT4vHvT76RKAN0ltzgRt4S2ek\ni1Zwxnx+2GMWz8vV8zyAkE+a104l9Jujvgg1SFkCgYEAllHpV9Go4P8CCN4MnJt+\nocAEA1ookRF6eL6D8Fwtxc1pGvi1cosK4guU+eRpSPAcHO4nz4gSv1ZZJI+01dxK\nN7RbJQM0/kTG7VPbt1NT1s+udHVIkEtIqcZnkkspecZ/wjPW7L/EIAv+LRJ7ut8j\nHcDm7DxeejFNBbPV2JINCJc=\n-----END PRIVATE KEY-----\n",
+  "client_email": "gemini-video-processor@calhacks-463706.iam.gserviceaccount.com",
+  "client_id": "110502261458243462091",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gemini-video-processor%40calhacks-463706.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
